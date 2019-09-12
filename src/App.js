@@ -1,6 +1,8 @@
 import React from 'react'
 import Api from './Api'
 import Board from './components/Board'
+import { connect } from 'react-redux'
+import { getBoard } from './actions/BoardActions'
 
 
 const TITLE = 'GraphQL Demo App'
@@ -17,27 +19,32 @@ class App extends React.Component {
         super(props)
 
         this.state = {
-            board: null
+            boardId: 2
         }
     }
 
     componentDidMount() {
-        Api.getBoards(2).then(result => {
-            console.log(result.data)
-            this.setState({board: result.data.data.board})
-        })
+        this.props.getBoard(this.state.boardId)
     }
 
     render() {
+        const { boardId } = this.state
+
         return (
             <div className="App" style={style.main}>
                 <h1>{TITLE}</h1>
-                {this.state.board && (
-                    <Board board={this.state.board} />
+                {boardId && (
+                    <Board id={boardId} />
                 )}
             </div>
         )
     }
 }
 
-export default App
+const mapStateToProps = state => {
+    const { boards } = state
+    return { boards }
+}
+
+
+export default connect(mapStateToProps, { getBoard })(App)

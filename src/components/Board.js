@@ -2,6 +2,7 @@ import React from 'react'
 import CardList from './CardList'
 import { DndProvider } from 'react-dnd'
 import HTML5Backend from 'react-dnd-html5-backend'
+import { connect } from 'react-redux'
 
 
 const style = {
@@ -13,10 +14,18 @@ const style = {
 
 
 function Board(props) {
-    const { board } = props
-    const cardLists = board.cardLists.map(data => {
+    const { boardId } = props
+    const board = props.boards[String(boardId)]
+
+    console.log(boardId)
+
+    if (!board) {
+        return null
+    }
+
+    const cardLists = board.cardLists.map(id => {
         return (
-            <CardList key={data.id} data={data} />
+            <CardList key={id} id={id} />
         )
     })
 
@@ -32,4 +41,10 @@ function Board(props) {
     )
 }
 
-export default Board
+
+const mapStateToProps = state => {
+    const { boards } = state
+    return { boards }
+}
+
+export default connect(mapStateToProps)(Board)

@@ -1,5 +1,6 @@
 import React from 'react'
 import Card from './Card'
+import { connect } from 'react-redux'
 
 
 const style = {
@@ -23,19 +24,30 @@ const style = {
 
 
 function CardList(props) {
-    const { data } = props
-    const cards = data.cards.map(data => {
+    const { id, cardLists } = props
+    const cardList = cardLists[id]
+
+    if (!cardList) {
+        return null
+    }
+
+    const cards = cardList.cards.map(id => {
         return (
-            <Card key={data.id} data={data} />
+            <Card key={id} id={id} />
         )
     })
 
     return (
         <div style={style.list}>
-            <span style={style.name}>{data.name}</span>
+            <span style={style.name}>{cardList.name}</span>
             {cards}
         </div>
     )
 }
 
-export default CardList
+const mapStateToProps = state => {
+    const { cardLists } = state
+    return { cardLists }
+}
+
+export default connect(mapStateToProps)(CardList)

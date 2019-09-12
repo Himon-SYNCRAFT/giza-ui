@@ -5,6 +5,19 @@ const gql = axios.create({
     baseURL: 'http://localhost:8080/graphql',
 })
 
+gql.interceptors.response.use(response => {
+    const hasErrors = response.data.errors.length > 0
+
+    if (hasErrors) {
+        const error = response.data.errors.join(', ')
+        return Promise.reject(error)
+    }
+
+    return response.data
+}, error => {
+    return Promise.reject(error)
+})
+
 const getBoards = (id) =>  `
 {
     board(id: ${id}) {
@@ -24,6 +37,7 @@ const getBoards = (id) =>  `
                 id
                 title
                 description
+                cardListId
                 owner {
                     id
                     firstName
@@ -45,14 +59,18 @@ const getBoards = (id) =>  `
 `
 
 const moveCard = (cardId, listId) =>  `mutation {
-    moveCardToOtherList(cardId: ${cardId}, cardListId: ${listId})
+    moveCardToOtherList(cardId: ${cardId}, cardListId: ${listId}) { id, cardListId }
 }
 `
 
 const Api = {
-    getBoards(id) {
+    getBoard: (id) => {
         return gql.post('', { query: getBoards(id) })
-    }
+    },
+
+    moveCard: (cardId, listId) => {
+        return gql.post('', { query: moveCard(cardId, listId) })
+    },
 }
 
 

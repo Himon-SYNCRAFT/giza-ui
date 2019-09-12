@@ -1,6 +1,7 @@
 import React from 'react'
 import { useDrag, useDrop } from 'react-dnd'
-import Api from '../Api'
+import { connect } from 'react-redux'
+import { moveCard } from '../actions/CardActions'
 
 
 const style = {
@@ -24,7 +25,7 @@ const style = {
 
 
 function Card(props) {
-    const { title, id } = props.data
+    const { title, id, cardListId } = props.data
 
     const [dragObj, dragRef] = useDrag({
         item: { type: 'CARD', id },
@@ -35,20 +36,18 @@ function Card(props) {
         })
     })
 
-    console.log(dragObj)
-
     const [{ dropMonitor }, drop] = useDrop({
         accept: 'CARD',
-        drop: () => console.log('drop', id),
+        drop: (item, monitor) => {
+            props.moveCard(item.id, cardListId)
+            return item
+        },
         collect: monitor => ({
             isOver: !!monitor.isOver(),
             candDrop: !!monitor.canDrop(),
             dropMonitor: monitor,
         })
     })
-
-    // console.log(dragMonitor)
-    // console.log(dropMonitor)
 
     const cardStyle = {
         ...style.card,
@@ -64,4 +63,8 @@ function Card(props) {
     )
 }
 
-export default Card
+const mapStateToProps = state => {
+    return {}
+}
+
+export default connect(mapStateToProps, { moveCard })(Card)
