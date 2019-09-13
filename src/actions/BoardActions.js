@@ -14,5 +14,4 @@ export const getBoard = boardId => dispatch => {
                 payload,
             })
         })
-
 }

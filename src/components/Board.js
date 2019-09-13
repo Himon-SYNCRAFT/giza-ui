@@ -14,16 +14,14 @@ const style = {
 
 
 function Board(props) {
-    const { boardId } = props
-    const board = props.boards[String(boardId)]
-
-    console.log(boardId)
+    const { id: boardId, boards } = props
+    const board = boards[String(boardId)]
 
     if (!board) {
         return null
     }
 
-    const cardLists = board.cardLists.map(id => {
+    const boardCardLists = board.cardLists.map(id => {
         return (
             <CardList key={id} id={id} />
         )
@@ -35,7 +33,7 @@ function Board(props) {
         >
             <h2>{board.name}</h2>
             <div style={style.lists}>
-                {cardLists}
+                {boardCardLists}
             </div>
         </DndProvider>
     )

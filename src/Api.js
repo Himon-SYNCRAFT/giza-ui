@@ -58,10 +58,47 @@ const getBoards = (id) =>  `
 }
 `
 
-const moveCard = (cardId, listId) =>  `mutation {
+const moveCard = (cardId, listId) => `mutation {
     moveCardToOtherList(cardId: ${cardId}, cardListId: ${listId}) { id, cardListId }
-}
-`
+}`
+
+const moveCardAboveOtherCard = (sourceId, targetId) => `mutation {
+    moveCardAboveOtherCard(sourceId: ${sourceId}, targetId: ${targetId}) {
+        id
+        name
+        owner {
+            id
+            firstName
+            lastName
+            email
+            login
+        }
+        cardLists {
+            id
+            name
+            cards {
+                id
+                title
+                description
+                cardListId
+                owner {
+                    id
+                    firstName
+                    lastName
+                    email
+                    login
+                }
+            }
+            owner {
+                id
+                firstName
+                lastName
+                email
+                login
+            }
+        }
+    }
+}`
 
 const Api = {
     getBoard: (id) => {
@@ -71,6 +108,10 @@ const Api = {
     moveCard: (cardId, listId) => {
         return gql.post('', { query: moveCard(cardId, listId) })
     },
+
+    moveCardAboveOtherCard: (sourceId, targetId) => {
+        return gql.post('', { query: moveCardAboveOtherCard(sourceId, targetId) })
+    }
 }
 
 

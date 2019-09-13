@@ -1,4 +1,4 @@
-import { GET_BOARD, MOVE_CARD } from '../actions/types'
+import { GET_BOARD } from '../actions/types'
 
 
 const INITIAL_STATE = {}

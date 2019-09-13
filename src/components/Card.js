@@ -1,7 +1,7 @@
 import React from 'react'
 import { useDrag, useDrop } from 'react-dnd'
 import { connect } from 'react-redux'
-import { moveCard } from '../actions/CardActions'
+import { moveCardAboveOtherCard } from '../actions/CardActions'
 
 
 const style = {
@@ -25,7 +25,9 @@ const style = {
 
 
 function Card(props) {
-    const { title, id, cardListId } = props.data
+    const { id, cards } = props
+    const data = cards[id]
+    const { title, cardListId } = data
 
     const [dragObj, dragRef] = useDrag({
         item: { type: 'CARD', id },
@@ -36,16 +38,18 @@ function Card(props) {
         })
     })
 
-    const [{ dropMonitor }, drop] = useDrop({
+    const [{ dropId, dropMonitor, isOver, isOverCurrent }, drop] = useDrop({
         accept: 'CARD',
         drop: (item, monitor) => {
-            props.moveCard(item.id, cardListId)
+            props.moveCardAboveOtherCard(item.id, id)
             return item
         },
         collect: monitor => ({
             isOver: !!monitor.isOver(),
+            isOverCurrent: !!monitor.isOver({ shallow: true }),
             candDrop: !!monitor.canDrop(),
             dropMonitor: monitor,
+            dropId: id,
         })
     })
 
@@ -54,17 +58,24 @@ function Card(props) {
         opacity: dragObj.opacity
     }
 
+    if (isOver) {
+        cardStyle.marginTop = "20px"
+    }
+
     return (
-        <div ref={drop}>
-            <div ref={dragRef} style={cardStyle}>
-                <span style={style.title}>{ title }</span>
+        <>
+            <div ref={drop}>
+                <div ref={dragRef} style={cardStyle}>
+                    <span style={style.title}>{ title }</span>
+                </div>
             </div>
-        </div>
+        </>
     )
 }
 
 const mapStateToProps = state => {
-    return {}
+    const { cards } = state
+    return { cards }
 }
 
-export default connect(mapStateToProps, { moveCard })(Card)
+export default connect(mapStateToProps, { moveCardAboveOtherCard })(Card)

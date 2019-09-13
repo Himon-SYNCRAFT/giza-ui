@@ -1,8 +1,9 @@
 import React from 'react'
-import Api from './Api'
-import Board from './components/Board'
 import { connect } from 'react-redux'
 import { getBoard } from './actions/BoardActions'
+import { Container } from 'react-bootstrap'
+
+import Board from './components/Board'
 
 
 const TITLE = 'GraphQL Demo App'
@@ -32,19 +33,15 @@ class App extends React.Component {
 
         return (
             <div className="App" style={style.main}>
-                <h1>{TITLE}</h1>
-                {boardId && (
-                    <Board id={boardId} />
-                )}
+                <Container fluid>
+                    <h1>{TITLE}</h1>
+                    {boardId && (
+                        <Board id={boardId} />
+                    )}
+                </Container>
             </div>
         )
     }
 }
 
-const mapStateToProps = state => {
-    const { boards } = state
-    return { boards }
-}
-
-
-export default connect(mapStateToProps, { getBoard })(App)
+export default connect(null, { getBoard })(App)

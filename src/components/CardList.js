@@ -1,6 +1,10 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Card from './Card'
+import CardForm from './CardForm'
+import { Button } from 'react-bootstrap'
 import { connect } from 'react-redux'
+import { useDrop } from 'react-dnd'
+import { moveCardToOtherList } from '../actions/CardActions'
 
 
 const style = {
@@ -24,23 +28,41 @@ const style = {
 
 
 function CardList(props) {
+    const [showForm, setShowForm] = useState(false)
+
     const { id, cardLists } = props
-    const cardList = cardLists[id]
+    const data = cardLists[String(id)]
 
-    if (!cardList) {
-        return null
-    }
+    const [{ dropMonitor }, drop] = useDrop({
+        accept: 'CARD',
+        drop: (item, monitor) => {
+            if (monitor.didDrop()) {
+                return
+            }
 
-    const cards = cardList.cards.map(id => {
-        return (
-            <Card key={id} id={id} />
-        )
+            props.moveCardToOtherList(item.id, id)
+            return item
+        },
+        collect: monitor => ({
+            isOver: !!monitor.isOver(),
+            candDrop: !!monitor.canDrop(),
+            dropMonitor: monitor,
+        })
     })
 
+    const openForm = () => setShowForm(true)
+    const closeForm = () => setShowForm(false)
+
     return (
-        <div style={style.list}>
-            <span style={style.name}>{cardList.name}</span>
-            {cards}
+        <div style={style.list} ref={drop}>
+            {data && (
+                <span style={style.name}>{data.name}</span>
+            )}
+            {data && data.cards.map(id => <Card key={id} id={id} />)}
+            <Button onClick={openForm}>+ add card</Button>
+            {showForm && (
+                <CardForm close={closeForm} />
+            )}
         </div>
     )
 }
@@ -50,4 +72,4 @@ const mapStateToProps = state => {
     return { cardLists }
 }
 
-export default connect(mapStateToProps)(CardList)
+export default connect(mapStateToProps, { moveCardToOtherList })(CardList)
