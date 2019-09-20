@@ -9,8 +9,7 @@ import { composeWithDevTools } from 'redux-devtools-extension'
 import thunk from 'redux-thunk'
 import { Provider } from 'react-redux'
 
-import reducers from './reducers'
-
+import reducers from './reducers/MainReducer'
 
 const store = createStore(reducers, composeWithDevTools(
     applyMiddleware(thunk)

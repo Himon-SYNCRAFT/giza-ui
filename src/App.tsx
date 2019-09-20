@@ -14,17 +14,20 @@ const style = {
     }
 }
 
+type Props = {
+    getBoard(boardId: number): void
+}
 
-class App extends React.Component {
-    constructor(props) {
-        super(props)
+type State = {
+    boardId: number
+}
 
-        this.state = {
-            boardId: 2
-        }
+class App extends React.Component<Props, State> {
+    readonly state: State = {
+        boardId: 2
     }
 
-    componentDidMount() {
+    componentDidMount = () => {
         this.props.getBoard(this.state.boardId)
     }
 
@@ -33,8 +36,7 @@ class App extends React.Component {
 
         return (
             <div className="App" style={style.main}>
-                <Container fluid>
-                    <h1>{TITLE}</h1>
+                <Container fluid={true} style={{paddingLeft: 0, paddingRight: 0}}>
                     {boardId && (
                         <Board id={boardId} />
                     )}
@@ -44,4 +46,8 @@ class App extends React.Component {
     }
 }
 
-export default connect(null, { getBoard })(App)
+const dispatchProps = {
+    getBoard
+}
+
+export default connect(null, dispatchProps)(App)
